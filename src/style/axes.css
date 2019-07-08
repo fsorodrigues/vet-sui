@@ -1,0 +1,39 @@
+.axis {
+    pointer-events: none;
+}
+
+/* hide domain path */
+.axis-y .domain,
+.axis-x .domain {
+    display: none;
+}
+
+/* hide vertical tick line */
+/* .axis-x .tick line { */
+    /* display: none */
+/* } */
+
+/* hide y axis 0 */
+.axis-y .tick:first-of-type text {
+    display: none;
+}
+
+/* make y axis ticks dotted lines */
+.axis-y .tick:not(:first-of-type) line,
+.axis-x .tick line {
+    stroke: darkgrey;
+    stroke-dasharray: 1pt 2pt;
+    /* display: none; */
+}
+
+/* #bars-funding-pct .axis-y .tick:not(:nth-child(7)) line, */
+/* #bars-roi .axis-y .tick:not(:nth-child(5)) line { */
+    /* stroke: darkgrey; */
+    /* stroke-width: 0.25pt; */
+    /* stroke-dasharray: 1pt 2pt; */
+/* } */
+
+/* #bars-funding-pct .axis-y .tick:nth-child(7) line, */
+/* #bars-roi .axis-y .tick:nth-child(5) line { */
+    /* stroke: black; */
+/* } */
