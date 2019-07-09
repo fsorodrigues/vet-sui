@@ -6,7 +6,7 @@ import {nest} from "d3-collection";
 import {min,max} from "d3-array";
 
 // importing util functions
-import {isMobile} from "./utils/utils";
+import {isMobile,parseYear} from "./utils/utils";
 
 // importing CSS
 import './style/main.css';
@@ -17,7 +17,7 @@ import './style/axes.css';
 import LineContainer from './containers/LineContainer';
 
 // layout variables
-const margin = {t:0,r:0,b:0,l:0};
+const margin = {t:5,r:15,b:15,l:15};
 
 /**** INSTANCES: create instances of functions ****/
 // instantiating mobile check
@@ -35,13 +35,36 @@ const vermont = csv('./data/vets-vermont.csv',d => d);
 
 Promise.all([states,vermont]).then(([states,vermont]) => {
     // data transformation
+    // creating configs for different charts
     const statesConfig = {
         minY: 0,
-        maxY: max(states, d => +d.value),
-        minX: min(states, d => +d.year),
-        maxX: max(states, d => +d.year)
+        maxY: max(states, d => +d.rate),
+        minX: parseYear(min(states, d => +d.year)),
+        maxX: parseYear(max(states, d => +d.year)),
+        X:"year",
+        Y:"rate",
+        getColor: d => d.key === 'Vermont' ? '#B23232' : d.key === 'U.S.' ? '#4169E1' :'gainsboro',
+        getStrokeWidth: d => d.key === 'Vermont' ? 3 : d.key === 'U.S.' ? 3 : 1.25,
+        nXTicks: 10,
+        forceOrder:true,
+        tooltipFunction:d => d,
+        tooltipContainer:'#state-rates-tooltip'
     };
-    console.log(statesConfig);
+
+    const vermontConfig = {
+        minY: 0,
+        maxY: max(vermont, d => +d.value),
+        minX: parseYear(min(vermont, d => +d.year)),
+        maxX: parseYear(max(vermont, d => +d.year)),
+        X:"year",
+        Y:"value",
+        getColor: d => d.key === 'veteran-rate' ? '#B23232' : 'gainsboro',
+        getStrokeWidth: d => 3,
+        nXTicks: 5,
+        forceOrder:false,
+        tooltipFunction:d => d,
+        tooltipContainer:'#vermont-rates-tooltip'
+    };
 
     // nesting datasets
     const statesNested = nest()
@@ -52,8 +75,26 @@ Promise.all([states,vermont]).then(([states,vermont]) => {
         .key(d => d.rate)
         .entries(vermont);
 
-    // selectind nodes and drawing
+    // selecting node and drawing
+    // but, first, passing down variables to drawing function
+    lines.config(statesConfig);
     select('#state-rates').data([statesNested])
         .each(lines);
+
+    // selecting node and drawing
+    // but, first, passing down variables to drawing function
+    lines.config(vermontConfig);
+    select('#vermont-rates').data([vermontNested])
+        .each(lines);
+
+    lines.on('config:set', function(d) {
+        if (d === 'value') {
+            lines.config(statesConfig);
+
+        } else {
+            lines.config(vermontConfig);
+        }
+    })
+
 
 });

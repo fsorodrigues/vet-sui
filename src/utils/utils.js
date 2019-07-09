@@ -1,15 +1,15 @@
 // importing d3.js
 import {format} from "d3-format";
-import {timeFormat,timeParse} from "d3-time-format";
+import {timeParse,timeFormat} from "d3-time-format";
 
-export const formatPct = format(".2%");
-export const formatPct1 = format(".1%");
+// export const formatPct = format(".2%");
+// export const formatPct1 = format(".1%");
+//
+// export const formatComma = format(",");
+// export const formatDecimals = format(".2f");
 
-export const formatComma = format(",");
-export const formatDecimals = format(".2f");
-
-export const parseTime = timeParse("%Y-%m-%d");
-export const formatYear = timeFormat("%Y");
+export const parseYear = timeParse('%Y');
+export const formatYear = timeFormat('%y');
 
 export const isMobile = () => {
 	if (navigator.userAgent.match(/Android/i)
@@ -25,21 +25,8 @@ export const isMobile = () => {
 	}
 };
 
-//
-export const parseInflation = d => {
-	return {
-		date:parseTime(d.date),
-		nominal:+d["max-in-vt"],
-		adjusted:+d["real-in-vt"],
-	};
-};
-
-export const formatContent = d => {
-	if (formatYear(d.date) >= "2019") {
-		return `<span class='tooltip-bold'>${formatYear(d.date)}</span> projected value: <span class='tooltip-bold'>$${formatDecimals(d.nominal)}</span>`;
-	} else if (formatYear(d.date) === "1968") {
-		return `In <span class='tooltip-bold'>${formatYear(d.date)}</span> the minimum wage reached its maximum purchasing power at <span class='tooltip-bold'>$${formatDecimals(d.nominal)}</span>, or <span class='tooltip-bold'>$${formatDecimals(d.adjusted)}</span> in 2018.`;
-	} else {
-		return `In <span class='tooltip-bold'>${formatYear(d.date)}</span> the minimum wage value was <span class='tooltip-bold'>$${formatDecimals(d.nominal)}</span>, the equivalent to <span class='tooltip-bold'>$${formatDecimals(d.adjusted)}</span> in 2018.`;
-	}
-};
+export const forceSort = (d,values) => {
+	values.forEach(e => {
+		d.push(d.splice(d.indexOf(d.filter(f => f.key === e)[0]), 1)[0]);
+	});
+}
